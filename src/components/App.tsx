@@ -1,18 +1,21 @@
-import React from 'react';
+import React, { VFC } from 'react';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
+import { Setting } from './pages/Setting';
+import { Top } from './pages/Top';
+import { Workspace } from './pages/Workspace';
 
-export const App = () => {
+export const App: VFC = () => {
   return (
     <Router>
       <Switch>
         <Route exact path="/">
-          <p>home</p>
-        </Route>
-        <Route path="/setting">
-          <p>setting</p>
+          <Top />
         </Route>
         <Route path="/workspace">
-          <p>workspace</p>
+          <Workspace />
+        </Route>
+        <Route path="/setting">
+          <Setting />
         </Route>
         <Route path="*">
           <p>404</p>
