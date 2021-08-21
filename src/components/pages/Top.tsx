@@ -24,7 +24,7 @@ export const Top: VFC = () => {
       ) : (
         <div className="text-center">
           <h3 className="text-xl">
-            This is pigu offical twitter management page 👋
+            This is pigu official twitter management page 👋
           </h3>
           <button
             className="
