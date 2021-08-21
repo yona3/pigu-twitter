@@ -32,7 +32,12 @@ export const Workspace: VFC = () => {
             <Search />
           </div>
         </Route>
-        <Route>
+        <Route path="/workspace/tweet/:id">
+          <div className="mt-10">
+            <h1>tweet detail</h1>
+          </div>
+        </Route>
+        <Route path="/workspace/post/:id">
           <div className="mt-10">
             <h1>post detail</h1>
           </div>
