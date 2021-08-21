@@ -1,12 +1,18 @@
 import React, { VFC } from 'react';
 import { useRecoilValue } from 'recoil';
 import { POSTS } from '../../const/post';
+import { useAuth } from '../../hooks/useAuth';
+import { signInWithGoogle } from '../../lib/auth';
 import { meState } from '../../state/atoms';
 import { Layout } from '../shared/Layout';
 import { TweetCard } from '../shared/TweetCard';
 
 export const Top: VFC = () => {
-  const me = useRecoilValue(meState);
+  // const me = useRecoilValue(meState);
+  const { me } = useAuth();
+  console.log('me :', me);
+
+  const signIn = () => signInWithGoogle();
 
   return (
     <Layout>
@@ -23,7 +29,18 @@ export const Top: VFC = () => {
         </>
       ) : (
         <div className="text-center">
-          <button className="text-lg text-blue-500">Login</button>
+          <h3 className="text-xl">
+            This is pigu offical twitter management page 👋
+          </h3>
+          <button
+            className="
+              mt-2 text-base text-blue-500 
+              hover:underline transition
+            "
+            onClick={signIn}
+          >
+            Login
+          </button>
         </div>
       )}
     </Layout>
