@@ -6,11 +6,11 @@ import { Layout } from '../shared/Layout';
 import { TweetCard } from '../shared/TweetCard';
 
 export const Top: VFC = () => {
-  const { me } = useAuth();
+  const { me, isMe } = useAuth();
 
   return (
     <Layout>
-      {me ? (
+      {me && isMe ? (
         <>
           <h1 className="text-lg sm:text-xl text-center">Reserve</h1>
           <div className="space-y-5 mt-10">

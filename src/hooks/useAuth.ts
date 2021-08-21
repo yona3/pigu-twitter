@@ -1,12 +1,14 @@
 import firebase from '../config/firebase';
 import { useRecoilState } from 'recoil';
 import { userStateObserver } from '../lib/auth';
-import { meState } from '../state/atoms';
+import { isMeState, meState } from '../state/atoms';
 import { useEffect } from 'react';
 import { Me } from '../types';
 
 export const useAuth = () => {
   const [me, setMe] = useRecoilState(meState);
+  const [isMe, setIsMe] = useRecoilState(isMeState);
+  const env = import.meta.env;
 
   useEffect(() => {
     userStateObserver((user: firebase.User | null) => {
@@ -20,12 +22,17 @@ export const useAuth = () => {
           email: user.email,
         };
 
+        if (env.VITE_MY_USER_ID === data.id) setIsMe(true);
+
         setMe(data);
       }
 
-      if (!user && me) setMe(null);
+      if (!user && me) {
+        setMe(null);
+        setIsMe(false);
+      }
     });
   }, []);
 
-  return { me };
+  return { me, isMe };
 };
