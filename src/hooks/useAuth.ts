@@ -9,20 +9,21 @@ export const useAuth = () => {
   const [me, setMe] = useRecoilState(meState);
 
   useEffect(() => {
-    if (me) return;
-
     userStateObserver((user: firebase.User | null) => {
-      if (!user) return;
-      if (!user.displayName || !user.email)
-        return console.log('name & email is undefined.');
+      if (user && !me) {
+        if (!user.displayName || !user.email)
+          return console.log('name & email is undefined.');
 
-      const data: Me = {
-        id: user.uid,
-        name: user.displayName,
-        email: user.email,
-      };
+        const data: Me = {
+          id: user.uid,
+          name: user.displayName,
+          email: user.email,
+        };
 
-      setMe(data);
+        setMe(data);
+      }
+
+      if (!user && me) setMe(null);
     });
   }, []);
 

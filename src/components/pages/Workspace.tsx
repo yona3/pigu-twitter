@@ -1,13 +1,10 @@
 import React, { VFC } from 'react';
-import { Link, Route, Switch, useRouteMatch } from 'react-router-dom';
+import { Link, Route, Switch } from 'react-router-dom';
 import { Layout } from '../shared/Layout';
 import { Tweet } from '../shared/Tweet';
 import { Search } from '../shared/Search';
 
 export const Workspace: VFC = () => {
-  const match = useRouteMatch();
-  console.log('match: ', match);
-
   return (
     <Layout>
       <h1 className="text-lg sm:text-xl text-center">Workspace</h1>
