@@ -1,6 +1,6 @@
 import { Request, Response } from 'firebase-functions/v1';
-import { firestore } from './lib/firebase';
-import { Tweet } from './model';
+import { firestore } from '../lib/firebase';
+import { Tweet } from '../model';
 
 const fetchShceduledTweets = async () => {
   try {
