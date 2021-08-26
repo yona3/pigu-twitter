@@ -1,10 +1,18 @@
 import { Response } from 'firebase-functions/v1';
 import { Request } from 'firebase-functions/v1/https';
-import { twitter } from './lib/twitter';
+import { firestore } from './lib/firebase';
 
-export const testTweet = async (_: Request, res: Response) => {
+const fetchShceduledTweets = async () => {
+  const snapshot = await firestore.collection('twitter/v1/tweet').get();
+  snapshot.forEach((doc) => {
+    const tweet = doc.data();
+    console.log(tweet);
+  });
+};
+
+export const twitterTestFunction = async (_: Request, res: Response) => {
   try {
-    await twitter.v1.tweet('test');
+    await fetchShceduledTweets();
     res.json('success!');
   } catch (err) {
     console.error(err.message);

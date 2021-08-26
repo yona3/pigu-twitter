@@ -1,8 +1,4 @@
-import * as functions from 'firebase-functions';
-import * as admin from 'firebase-admin';
+import { functions } from './lib/firebase';
+import { twitterTestFunction } from './testTweet';
 
-import { testTweet } from './testTweet';
-
-admin.initializeApp();
-
-export const test = functions.https.onRequest(testTweet);
+export const test = functions.https.onRequest(twitterTestFunction);
