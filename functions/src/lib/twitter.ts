@@ -1,5 +1,5 @@
-import * as functions from 'firebase-functions';
 import { TwitterApi } from 'twitter-api-v2';
+import { functions } from './firebase';
 
 const config = functions.config();
 const env = config['pigu-ryu'];
