@@ -1,5 +1,4 @@
-import { Response } from 'firebase-functions/v1';
-import { Request } from 'firebase-functions/v1/https';
+import { Request, Response } from 'firebase-functions/v1';
 import { firestore } from './lib/firebase';
 
 const fetchShceduledTweets = async () => {
