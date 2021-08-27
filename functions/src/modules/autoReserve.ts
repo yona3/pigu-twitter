@@ -1,11 +1,16 @@
 import { Request, Response } from 'firebase-functions/v1';
 import { FildValue, firestore } from '../lib/firebase';
-import { Post, SystemTweetInterval, SystemTweetReserve, User } from '../model';
+import {
+  Post,
+  SystemTweetEnableTime,
+  SystemTweetInterval,
+  SystemTweetReserve,
+  User,
+} from '../model';
 import { TweetDocument } from '../model/Tweet';
 import { generateRandomNumber } from '../utils/generateRandomNumber';
 
 // todo
-// operating time (run this function at start time)
 // black list
 // isEnable
 // black date
@@ -55,6 +60,21 @@ export const autoReserve = async (_: Request, res: Response) => {
     if (!systemTweetInterval)
       throw new Error("doc('twitter/v1/system/tweet/interval') data is empty");
 
+    // get start time
+    const systemTweetEnableTimeSnapshot = await firestore
+      .collection('twitter/v1/system/tweet/enableTime')
+      .get();
+    if (systemTweetEnableTimeSnapshot.empty)
+      throw new Error("doc('twitter/v1/system/tweet/enableTime') not found");
+    const systemTweetEnableTime =
+      systemTweetEnableTimeSnapshot.docs[0].data() as SystemTweetEnableTime;
+    if (!systemTweetEnableTime)
+      throw new Error(
+        "doc('twitter/v1/system/tweet/enableTime') data is empty"
+      );
+
+    const startTime = systemTweetEnableTime.start;
+
     // get random posts
     await Promise.all(
       randomPostIds.map(async (postId, i) => {
@@ -75,7 +95,7 @@ export const autoReserve = async (_: Request, res: Response) => {
         // create tweet
         const shareLink = `https://pigu-ryu.web.app/${user.uid}/${postId}/share`;
         const tweetText = `${post.title}｜${user.displayName}\n\n#pigu #琉大\n${shareLink}`;
-        const tweetTime = 9 + systemTweetInterval.h * i; // h
+        const tweetTime = startTime + systemTweetInterval.h * i; // h
 
         const tweetAt = new Date(); // now
         tweetAt.setDate(tweetAt.getDate() + 1);
