@@ -1,14 +1,14 @@
 import { Request, Response } from 'firebase-functions/v1';
 import { FildValue, firestore } from '../lib/firebase';
-import { Post, SystemTweetReserve, User } from '../model';
+import { Post, SystemTweetInterval, SystemTweetReserve, User } from '../model';
 import { TweetDocument } from '../model/Tweet';
 import { generateRandomNumber } from '../utils/generateRandomNumber';
 
 // todo
-// interval
-// operating time
-// black date
+// operating time (run this function at start time)
 // black list
+// isEnable
+// black date
 
 export const autoReserve = async (_: Request, res: Response) => {
   try {
@@ -30,6 +30,7 @@ export const autoReserve = async (_: Request, res: Response) => {
       systemTweetReserveSnapshot.docs[0].data() as SystemTweetReserve;
     if (!systemTweetReserve)
       throw new Error("doc('twitter/v1/system/tweet/reserve') data is empty");
+
     const reserveLength = systemTweetReserve.length;
 
     // create random post id array
@@ -43,9 +44,20 @@ export const autoReserve = async (_: Request, res: Response) => {
       }
     }
 
+    // get interval
+    const systemTweetIntervalSnapshot = await firestore
+      .collection('twitter/v1/system/tweet/interval')
+      .get();
+    if (systemTweetIntervalSnapshot.empty)
+      throw new Error("doc('twitter/v1/system/tweet/interval') not found");
+    const systemTweetInterval =
+      systemTweetIntervalSnapshot.docs[0].data() as SystemTweetInterval;
+    if (!systemTweetInterval)
+      throw new Error("doc('twitter/v1/system/tweet/interval') data is empty");
+
     // get random posts
     await Promise.all(
-      randomPostIds.map(async (postId) => {
+      randomPostIds.map(async (postId, i) => {
         // get post
         const postDoc = await firestore.doc(`posts/${postId}`).get();
         if (!postDoc.exists) return;
@@ -63,11 +75,16 @@ export const autoReserve = async (_: Request, res: Response) => {
         // create tweet
         const shareLink = `https://pigu-ryu.web.app/${user.uid}/${postId}/share`;
         const tweetText = `${post.title}｜${user.displayName}\n\n#pigu #琉大\n${shareLink}`;
+        const tweetTime = 9 + systemTweetInterval.h * i; // h
+
+        const tweetAt = new Date(); // now
+        tweetAt.setDate(tweetAt.getDate() + 1);
+        tweetAt.setHours(tweetTime - 9 + 24, 0, 0, 0); // set jst time
 
         const tweet: TweetDocument = {
           postId: post.id,
           text: tweetText,
-          tweetAt: new Date(),
+          tweetAt,
           createdAt: new Date(),
           updatedAt: FildValue.serverTimestamp(),
         };
