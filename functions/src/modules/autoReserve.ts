@@ -11,7 +11,6 @@ import { TweetDocument } from '../model/Tweet';
 import { generateRandomNumber } from '../utils/generateRandomNumber';
 
 // todo
-// black list
 // isEnable
 // black date
 
@@ -38,12 +37,26 @@ export const autoReserve = async (_: Request, res: Response) => {
 
     const reserveLength = systemTweetReserve.length;
 
+    // get black post list
+    const systemBlackPostsSnapshot = await firestore
+      .collection('twitter/v1/system/post/blackPosts')
+      .get();
+    if (systemBlackPostsSnapshot.empty)
+      throw new Error("doc('twitter/v1/system/post/blackPosts') not found");
+
+    const systemBlackPostsIds = systemBlackPostsSnapshot.docs.map(
+      (doc) => doc.id
+    );
+
     // create random post id array
     let randomPostIds: string[] = [];
     for (let i = 0; i < reserveLength; ) {
       const randomIndex = generateRandomNumber(0, index.allPosts.length - 1);
 
-      if (!randomPostIds.includes(index.allPosts[randomIndex])) {
+      if (
+        !randomPostIds.includes(index.allPosts[randomIndex]) &&
+        !systemBlackPostsIds.includes(index.allPosts[randomIndex])
+      ) {
         randomPostIds = [...randomPostIds, index.allPosts[randomIndex]];
         i++;
       }
