@@ -1,5 +1,5 @@
 import { Request, Response } from 'firebase-functions/v1';
-import { FildValue, firestore } from '../lib/firebase';
+import { FieldValue, firestore } from '../lib/firebase';
 import {
   Post,
   SystemTweetEnableTime,
@@ -119,7 +119,7 @@ export const autoReserve = async (_: Request, res: Response) => {
           text: tweetText,
           tweetAt,
           createdAt: new Date(),
-          updatedAt: FildValue.serverTimestamp(),
+          updatedAt: FieldValue.serverTimestamp(),
         };
 
         // reserve tweet
