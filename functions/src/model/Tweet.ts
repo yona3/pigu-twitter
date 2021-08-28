@@ -1,8 +1,8 @@
 export type TweetDocument = {
   postId: string;
   text: string;
-  tweetAt: Date;
-  createdAt: Date;
+  tweetAt: FirebaseFirestore.Timestamp | Date;
+  createdAt: FirebaseFirestore.Timestamp | Date;
   updatedAt: FirebaseFirestore.FieldValue;
 };
 
