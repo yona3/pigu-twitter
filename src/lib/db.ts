@@ -9,10 +9,9 @@ export type FieldValue = firebase.firestore.FieldValue;
 
 // functions
 
-export const fetchPost = (postId: string) =>
-  db.collection('posts').doc(postId).get();
+export const fetchPost = (postId: string) => db.doc(`posts/${postId}`).get();
 
-export const fetchMe = (userId: string) =>
-  db.collection('users').doc(userId).get();
+export const fetchMe = (userId: string) => db.doc(`users/${userId}`).get();
 
-export const fetchReservations = () => db.collection('twitter/v1/tweet').get();
+export const fetchReservations = () =>
+  db.collection('twitter/v1/tweet').orderBy('tweetAt').get();
