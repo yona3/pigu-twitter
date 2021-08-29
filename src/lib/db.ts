@@ -15,3 +15,6 @@ export const fetchMe = (userId: string) => db.doc(`users/${userId}`).get();
 
 export const fetchReservations = () =>
   db.collection('twitter/v1/tweet').orderBy('tweetAt').get();
+
+export const deleteReservation = (reservationId: string) =>
+  db.doc(`twitter/v1/tweet/${reservationId}`).delete();

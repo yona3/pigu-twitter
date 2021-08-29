@@ -2,7 +2,11 @@ import React, { useEffect, useState, VFC } from 'react';
 import { useParams } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
 import { useForm } from '../../../hooks/useForm';
-import { fetchReservations, Timestamp } from '../../../lib/db';
+import {
+  deleteReservation,
+  fetchReservations,
+  Timestamp,
+} from '../../../lib/db';
 import { reservationsState } from '../../../state';
 import { Tweet, TweetDocument } from '../../../types';
 import { formatDateFromTimestamp } from '../../../utils/formatDateFromTimestamp';
@@ -12,7 +16,7 @@ export const ReservationSetting: VFC = () => {
   const [reservations, setReservations] = useRecoilState(reservationsState);
   const [reservation, setReservation] = useState<Tweet | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const { form, setForm, handleChange, resetForm } = useForm({
+  const { form, setForm, handleChange } = useForm({
     text: '',
     tweetAt: '',
   });
@@ -47,6 +51,8 @@ export const ReservationSetting: VFC = () => {
       const data = reservations.filter(
         ({ tweetId }) => tweetId === params.id
       )[0];
+      if (!data) return;
+
       setReservation(data);
       setForm({
         text: data.text,
@@ -55,11 +61,24 @@ export const ReservationSetting: VFC = () => {
     }
   }, [reservations]);
 
+  const handleDelete = async () => {
+    const result = confirm('Are you sure?');
+    if (!result) return;
+
+    try {
+      await deleteReservation(params.id);
+      window.location.href = '/';
+      window.location.reload();
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   return (
     <div>
       <h2 className="text-lg font-bold">予約内容の変更</h2>
       <hr className="mt-2 border-gray-300" />
-      {reservation && (
+      {reservation ? (
         <div>
           <div className="mt-6 space-y-6">
             <div className="flex">
@@ -110,6 +129,7 @@ export const ReservationSetting: VFC = () => {
                 px-6 py-2 rounded transition w-1/2
                 font-semibold
               "
+              onClick={handleDelete}
             >
               Delete
             </button>
@@ -125,10 +145,13 @@ export const ReservationSetting: VFC = () => {
             </button>
           </div>
         </div>
-      )}
-      {isLoading && (
+      ) : isLoading ? (
         <div className="mt-4">
           <p className="text-gray-600">Loading...</p>
+        </div>
+      ) : (
+        <div className="mt-4">
+          <p className="text-gray-600">404 not found</p>
         </div>
       )}
     </div>
