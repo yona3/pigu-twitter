@@ -6,3 +6,4 @@ export {
   SystemTweetInterval,
   SystemTweetEnableTime,
 } from './System';
+export { TweetRequestData } from './Request';

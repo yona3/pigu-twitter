@@ -8,6 +8,7 @@ import {
   User,
 } from '../model';
 import { TweetDocument } from '../model/Tweet';
+import { createTweetText } from '../utils/createTweetText';
 import { generateRandomNumber } from '../utils/generateRandomNumber';
 
 // todo
@@ -106,8 +107,7 @@ export const autoReserve = async (_: Request, res: Response) => {
         if (!user) return;
 
         // create tweet
-        const shareLink = `https://pigu-ryu.web.app/${user.uid}/${postId}/share`;
-        const tweetText = `${post.title}｜${user.displayName}\n\n#pigu #琉大\n${shareLink}`;
+        const tweetText = createTweetText(post, user);
         const tweetTime = startTime + systemTweetInterval.h * i; // h
 
         const tweetAt = new Date(); // now

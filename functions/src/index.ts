@@ -11,9 +11,7 @@ import {
 // [x] auto_tweet (auto - pub/sub)
 // [x] auto_reserve (auto - pub/sub)
 
-export const tweet = functions
-  .region('asia-northeast1')
-  .https.onRequest(tweetFn);
+export const tweet = functions.region('us-central1').https.onCall(tweetFn);
 export const auto_tweet = functions
   .region('asia-northeast1')
   .https.onRequest(autoTweetFn);
