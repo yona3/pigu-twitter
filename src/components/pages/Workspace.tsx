@@ -1,20 +1,28 @@
 import React, { VFC } from 'react';
-import { Link, Route, Switch } from 'react-router-dom';
+import { Link, Route, Switch, useLocation } from 'react-router-dom';
 import { Layout } from '../shared/Layout';
 import { Tweet } from '../shared/Tweet';
 import { Search } from '../shared/Search';
 
 export const Workspace: VFC = () => {
+  const { pathname } = useLocation();
+  const isSearchPage = pathname.includes('/search');
+  const isTweetPage = pathname === '/workspace';
+  const activeStyle = 'font-semibold text-gray-800';
   return (
     <Layout>
       <h1 className="text-lg sm:text-xl text-center">Workspace</h1>
       <nav className="mt-8">
         <ul className="flex justify-center space-x-5 text-gray-500 underline">
           <li>
-            <Link to="/workspace">Tweet</Link>
+            <Link to="/workspace">
+              <p className={`${isTweetPage ? activeStyle : ''}`}>Tweet</p>
+            </Link>
           </li>
           <li>
-            <Link to="/workspace/search">Search</Link>
+            <Link to="/workspace/search">
+              <p className={`${isSearchPage ? activeStyle : ''}`}>Search</p>
+            </Link>
           </li>
         </ul>
       </nav>
