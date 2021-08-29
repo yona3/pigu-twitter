@@ -1,5 +1,5 @@
 import React, { VFC } from 'react';
-import { TweetSettingItem } from './TweetSettingItem';
+import { TweetSettingItem } from '../../shared/TweetSettingItem';
 
 export const Tweet: VFC = () => {
   return (

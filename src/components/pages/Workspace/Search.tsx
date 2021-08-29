@@ -1,7 +1,7 @@
 import React, { VFC } from 'react';
 import { Link } from 'react-router-dom';
-import { POSTS } from '../../const/post';
-import { PostCard } from './PostCard';
+import { POSTS } from '../../../const/post';
+import { PostCard } from '../../shared/PostCard';
 
 export const Search: VFC = () => {
   return (
