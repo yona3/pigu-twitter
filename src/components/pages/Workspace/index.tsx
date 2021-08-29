@@ -3,6 +3,7 @@ import { Link, Route, Switch, useLocation } from 'react-router-dom';
 import { Layout } from '../../shared/Layout';
 import { Tweet } from './Tweet';
 import { Search } from './Search';
+import { ReservationSetting } from './ReservationSetting';
 
 export const Workspace: VFC = () => {
   const { pathname } = useLocation();
@@ -40,7 +41,7 @@ export const Workspace: VFC = () => {
         </Route>
         <Route path="/workspace/tweet/:id">
           <div className="mt-10">
-            <h1>tweet detail</h1>
+            <ReservationSetting />
           </div>
         </Route>
         <Route path="/workspace/post/:id">
