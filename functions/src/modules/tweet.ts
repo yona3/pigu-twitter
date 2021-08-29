@@ -14,7 +14,7 @@ const fetchShceduledTweets = async () => {
   }
 };
 
-export const twitterTestFunction = async (_: Request, res: Response) => {
+export const tweet = async (_: Request, res: Response) => {
   try {
     await fetchShceduledTweets();
     res.json('success!');

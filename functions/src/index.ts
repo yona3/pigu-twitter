@@ -1,20 +1,22 @@
 import { functions } from './lib/firebase';
-import { twitterTestFunction } from './modules/testTweet';
-import { autoReserve } from './modules/autoReserve';
-import { autoTweet } from './modules/autoTweet';
+
+import {
+  tweet as tweetFn,
+  autoReserve as autoReserveFn,
+  autoTweet as autoTweetFn,
+} from './modules';
 
 // todo v1
-// [x] autoTweet
-// [x] autoReserve
-// [ ] createOGP
-// [ ] tweetNow
+// [ ] tweet (manual - https)
+// [x] auto_tweet (auto - pub/sub)
+// [x] auto_reserve (auto - pub/sub)
 
-export const test = functions
+export const tweet = functions
   .region('asia-northeast1')
-  .https.onRequest(twitterTestFunction);
+  .https.onRequest(tweetFn);
 export const auto_tweet = functions
   .region('asia-northeast1')
-  .https.onRequest(autoTweet);
+  .https.onRequest(autoTweetFn);
 export const auto_reserve = functions
   .region('asia-northeast1')
-  .https.onRequest(autoReserve);
+  .https.onRequest(autoReserveFn);
