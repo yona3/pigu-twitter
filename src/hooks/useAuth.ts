@@ -1,7 +1,7 @@
 import firebase from '../config/firebase';
 import { useRecoilState } from 'recoil';
 import { userStateObserver } from '../lib/auth';
-import { isMeState, meState } from '../state/atoms';
+import { isMeState, meState } from '../state';
 import { useEffect } from 'react';
 import { Me } from '../types';
 

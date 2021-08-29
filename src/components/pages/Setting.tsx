@@ -2,7 +2,7 @@ import React, { VFC } from 'react';
 import { Link } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import { signOut } from '../../lib/auth';
-import { meState } from '../../state/atoms';
+import { meState } from '../../state';
 import { Layout } from '../shared/Layout';
 
 export const Setting: VFC = () => {

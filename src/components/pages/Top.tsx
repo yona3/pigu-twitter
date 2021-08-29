@@ -3,7 +3,7 @@ import { useRecoilState } from 'recoil';
 import { useAuth } from '../../hooks/useAuth';
 import { signInWithGoogle } from '../../lib/auth';
 import { fetchReservations } from '../../lib/db';
-import { reservationsState } from '../../state/atoms';
+import { reservationsState } from '../../state';
 import { Tweet, TweetDocument } from '../../types';
 import { Layout } from '../shared/Layout';
 import { TweetCard } from '../shared/TweetCard';
