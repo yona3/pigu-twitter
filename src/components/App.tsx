@@ -11,22 +11,24 @@ export const App: VFC = () => {
   return (
     <Router>
       <Switch>
-        <Route exact path="/">
-          <Top />
-        </Route>
-        {me && isMe && (
-          <>
-            <Route path="/workspace">
-              <Workspace />
-            </Route>
-            <Route path="/setting">
-              <Setting />
-            </Route>
-          </>
-        )}
-        <Route path="*">
-          <p>404</p>
-        </Route>
+        <>
+          <Route exact path="/">
+            <Top />
+          </Route>
+          {me && isMe && (
+            <>
+              <Route path="/workspace">
+                <Workspace />
+              </Route>
+              <Route path="/setting">
+                <Setting />
+              </Route>
+            </>
+          )}
+          <Route path="*">
+            <p>404</p>
+          </Route>
+        </>
       </Switch>
     </Router>
   );
