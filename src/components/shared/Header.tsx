@@ -7,7 +7,7 @@ export const Header: VFC = () => {
   const me = useRecoilValue(meState);
 
   return (
-    <header className="bg-blue-500">
+    <header className="bg-blue-500 w-full fixed top-0">
       <div
         className="
           max-w-5xl h-16 mx-auto px-6 
