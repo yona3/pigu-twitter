@@ -1,4 +1,4 @@
-import React, { useMemo, VFC } from 'react';
+import React, { VFC } from 'react';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { Setting } from './pages/Setting';
@@ -25,9 +25,6 @@ export const App: VFC = () => {
               </Route>
             </>
           )}
-          <Route path="*">
-            <p>404</p>
-          </Route>
         </>
       </Switch>
     </Router>
