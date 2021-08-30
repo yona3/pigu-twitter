@@ -6,10 +6,10 @@ import {
   autoTweet as autoTweetFn,
 } from './modules';
 
-// todo v1
+// todo
 // [ ] tweet (manual - https)
-// [x] auto_tweet (auto - pub/sub)
-// [x] auto_reserve (auto - pub/sub)
+// [x] auto_tweet (auto - pub/sub) 2h
+// [x] auto_reserve (auto - pub/sub) 1day 12:00
 
 export const tweet = functions.region('us-central1').https.onCall(tweetFn);
 export const auto_tweet = functions
