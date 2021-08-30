@@ -1,14 +1,16 @@
 import React, { useEffect, useState, VFC } from 'react';
 import { useParams } from 'react-router';
 import { useRecoilState } from 'recoil';
-import { fetchPost } from '../../../lib/db';
-import { postsState } from '../../../state';
-import { Post } from '../../../types';
+import { fetchBlackPosts, fetchPost, updateBlackPost } from '../../../lib/db';
+import { blackPostsState, postsState } from '../../../state';
+import { BlackPost, Post } from '../../../types';
 
 export const PostSetting: VFC = () => {
   const params = useParams<{ id: string }>();
   const [posts, setPosts] = useRecoilState(postsState);
   const [post, setPost] = useState<Post | null>(null);
+  const [blackPosts, setBlackPosts] = useRecoilState(blackPostsState);
+  const [isBlackPost, setIsBlackPost] = useState<boolean | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
   const handleFetchPost = async (callback?: (post: Post) => void) => {
@@ -26,6 +28,7 @@ export const PostSetting: VFC = () => {
     }
   };
 
+  // fetch post
   useEffect(() => {
     if (!posts) {
       setIsLoading(true);
@@ -41,6 +44,57 @@ export const PostSetting: VFC = () => {
       setPost(data);
     }
   }, [posts]);
+
+  const handleFetchBlackPosts = async () => {
+    try {
+      const blackPostsSnapshot = await fetchBlackPosts();
+      if (blackPostsSnapshot.empty) throw new Error('black posts is empty.');
+
+      const blackPosts = blackPostsSnapshot.docs.map(
+        (doc) => ({ ...doc.data(), postId: doc.id } as BlackPost)
+      );
+      console.log('blackPosts: ', blackPosts);
+      setBlackPosts(blackPosts);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  // black list
+  useEffect(() => {
+    if (!blackPosts) {
+      handleFetchBlackPosts();
+    } else {
+      // check black posts
+      const blackPost = blackPosts.filter(
+        ({ postId }) => postId === params.id
+      )[0];
+      if (blackPost) {
+        setIsBlackPost(true);
+      } else {
+        setIsBlackPost(false);
+      }
+    }
+  }, [blackPosts]);
+
+  const handleUpdate = async () => {
+    try {
+      if (!post) throw new Error('post is empty.');
+
+      const query = isBlackPost ? 'remove' : 'add';
+      if (query === 'add') {
+        await updateBlackPost(params.id, query, {
+          uid: post.uid,
+          title: post.title,
+        });
+      } else {
+        await updateBlackPost(params.id, query);
+      }
+      window.location.reload();
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   return (
     <div>
@@ -71,16 +125,21 @@ export const PostSetting: VFC = () => {
 
           {/* bottom */}
           <div className="mt-12 text-center">
-            <button
-              className="
-                text-gray-400 border border-gray-600 
-                hover:bg-gray-100 hover:text-gray-700
-                px-6 py-2 rounded transition
-                font-semibold
-              "
-            >
-              Add Black List
-            </button>
+            {isBlackPost !== null ? (
+              <button
+                className="
+                  text-gray-400 border border-gray-600 
+                  hover:bg-gray-100 hover:text-gray-700
+                  px-6 py-2 rounded transition
+                  font-semibold
+                "
+                onClick={handleUpdate}
+              >
+                {isBlackPost ? 'Remove Black List' : 'Add Black List'}
+              </button>
+            ) : (
+              <p>check black list...</p>
+            )}
           </div>
         </div>
       ) : isLoading ? (

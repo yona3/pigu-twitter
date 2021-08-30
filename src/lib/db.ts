@@ -1,5 +1,5 @@
 import firebase from '../config/firebase';
-import { Tweet } from '../types';
+import { BlackPostDoc, Tweet } from '../types';
 
 const db = firebase.firestore();
 
@@ -22,3 +22,19 @@ export const updateReservation = (reservationId: string, data: Tweet) =>
 
 export const deleteReservation = (reservationId: string) =>
   db.doc(`twitter/v1/tweet/${reservationId}`).delete();
+
+export const fetchBlackPosts = () =>
+  db.collection('twitter/v1/system/tweet/blackPosts').get();
+
+export const updateBlackPost = (
+  postId: string,
+  query: 'add' | 'remove',
+  data?: BlackPostDoc
+) => {
+  if (query === 'add') {
+    if (!data) return;
+    return db.doc(`twitter/v1/system/tweet/blackPosts/${postId}`).set(data);
+  } else {
+    return db.doc(`twitter/v1/system/tweet/blackPosts/${postId}`).delete();
+  }
+};
