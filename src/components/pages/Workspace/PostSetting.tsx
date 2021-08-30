@@ -33,15 +33,20 @@ export const PostSetting: VFC = () => {
     if (!posts) {
       setIsLoading(true);
       // fetch posts
-      handleFetchPost((post) => setPosts([post]));
-    }
+      handleFetchPost((post) =>
+        setPosts((prev) => (prev ? [...prev, post] : [post]))
+      );
+    } else if (!post) {
+      const postInPosts = posts.find((p) => p.id === params.id);
+      console.log('postInPosts: ', postInPosts);
 
-    if (posts && posts.length > 0 && !post) {
-      const data = posts.filter(({ id }) => id === params.id)[0];
-      console.log('data: ', data);
-      if (!data) return console.log('Post not found');
-
-      setPost(data);
+      if (postInPosts) {
+        setPost(postInPosts);
+      } else {
+        handleFetchPost((post) =>
+          setPosts((prev) => (prev ? [...prev, post] : [post]))
+        );
+      }
     }
   }, [posts]);
 
@@ -98,7 +103,7 @@ export const PostSetting: VFC = () => {
 
   return (
     <div>
-      <h2 className="text-lg font-bold">投稿内容の変更</h2>
+      <h2 className="text-lg font-bold">投稿の設定</h2>
       <hr className="mt-2 border-gray-300" />
       {post ? (
         <div>
