@@ -1,5 +1,14 @@
 {
   "projects": {
     "default": "pigu-ryu"
+  },
+  "targets": {
+    "pigu-ryu": {
+      "hosting": {
+        "twitter": [
+          "pigu-twitter"
+        ]
+      }
+    }
   }
 }
