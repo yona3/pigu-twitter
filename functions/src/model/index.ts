@@ -4,6 +4,6 @@ export { User } from './User';
 export {
   SystemTweetReserve,
   SystemTweetInterval,
-  SystemTweetEnableTime,
+  SystemTweetOperationTime,
 } from './System';
 export { TweetRequestData } from './Request';

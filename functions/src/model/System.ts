@@ -8,7 +8,7 @@ export type SystemTweetInterval = {
   updatedAt: FirebaseFirestore.FieldValue;
 };
 
-export type SystemTweetEnableTime = {
+export type SystemTweetOperationTime = {
   start: number;
   end: number;
   time: number; // end - start

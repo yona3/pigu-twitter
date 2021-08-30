@@ -2,8 +2,8 @@ import { Request, Response } from 'firebase-functions/v1';
 import { FieldValue, firestore } from '../lib/firebase';
 import {
   Post,
-  SystemTweetEnableTime,
   SystemTweetInterval,
+  SystemTweetOperationTime,
   SystemTweetReserve,
   User,
 } from '../model';
@@ -12,6 +12,7 @@ import { createTweetText } from '../utils/createTweetText';
 import { generateRandomNumber } from '../utils/generateRandomNumber';
 
 // todo
+// ! fix set tweetAt bag
 // isEnable
 // black date
 
@@ -40,10 +41,10 @@ export const autoReserve = async (_: Request, res: Response) => {
 
     // get black post list
     const systemBlackPostsSnapshot = await firestore
-      .collection('twitter/v1/system/post/blackPosts')
+      .collection('twitter/v1/system/tweet/blackPosts')
       .get();
     if (systemBlackPostsSnapshot.empty)
-      throw new Error("doc('twitter/v1/system/post/blackPosts') not found");
+      throw new Error("doc('twitter/v1/system/tweet/blackPosts') not found");
 
     const systemBlackPostsIds = systemBlackPostsSnapshot.docs.map(
       (doc) => doc.id
@@ -75,19 +76,19 @@ export const autoReserve = async (_: Request, res: Response) => {
       throw new Error("doc('twitter/v1/system/tweet/interval') data is empty");
 
     // get start time
-    const systemTweetEnableTimeSnapshot = await firestore
-      .collection('twitter/v1/system/tweet/enableTime')
+    const systemTweetOperationTimeSnapshot = await firestore
+      .collection('twitter/v1/system/tweet/operationTime')
       .get();
-    if (systemTweetEnableTimeSnapshot.empty)
-      throw new Error("doc('twitter/v1/system/tweet/enableTime') not found");
-    const systemTweetEnableTime =
-      systemTweetEnableTimeSnapshot.docs[0].data() as SystemTweetEnableTime;
-    if (!systemTweetEnableTime)
+    if (systemTweetOperationTimeSnapshot.empty)
+      throw new Error("doc('twitter/v1/system/tweet/operationTime') not found");
+    const systemTweetOperationTime =
+      systemTweetOperationTimeSnapshot.docs[0].data() as SystemTweetOperationTime;
+    if (!systemTweetOperationTime)
       throw new Error(
-        "doc('twitter/v1/system/tweet/enableTime') data is empty"
+        "doc('twitter/v1/system/tweet/operationTime') data is empty"
       );
 
-    const startTime = systemTweetEnableTime.start;
+    const startTime = systemTweetOperationTime.start;
 
     // get random posts
     await Promise.all(
