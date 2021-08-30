@@ -1,9 +1,8 @@
-import { Request, Response } from 'firebase-functions/v1';
-import { firestore } from '../lib/firebase';
+import { firestore, functions } from '../lib/firebase';
 import { twitter } from '../lib/twitter';
 import { Tweet } from '../model';
 
-export const autoTweet = async (_: Request, res: Response) => {
+export const autoTweet = async (_: functions.EventContext) => {
   try {
     // get reserve
     const tweetSnapshot = await firestore.collection('twitter/v1/tweet').get();
@@ -40,9 +39,8 @@ export const autoTweet = async (_: Request, res: Response) => {
       })
     );
 
-    res.json('success!');
+    console.log('auto tweet success!');
   } catch (err) {
-    console.error(err);
-    res.json(err.message);
+    console.log('auto tweet failed!', err.message);
   }
 };

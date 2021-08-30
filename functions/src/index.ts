@@ -12,9 +12,11 @@ import {
 // [x] auto_reserve (auto - pub/sub) 1day 12:00
 
 export const tweet = functions.region('us-central1').https.onCall(tweetFn);
-export const auto_tweet = functions
-  .region('asia-northeast1')
-  .https.onRequest(autoTweetFn);
-export const auto_reserve = functions
-  .region('asia-northeast1')
-  .https.onRequest(autoReserveFn);
+export const auto_tweet = functions.pubsub
+  .schedule('every 1 hours from 10:00 to 22:00')
+  .timeZone('Asia/Tokyo')
+  .onRun(autoTweetFn);
+export const auto_reserve = functions.pubsub
+  .schedule('every day 12:00')
+  .timeZone('Asia/Tokyo')
+  .onRun(autoReserveFn);

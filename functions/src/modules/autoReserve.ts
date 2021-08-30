@@ -1,6 +1,5 @@
-import { Request, Response } from 'firebase-functions/v1';
 import { generateDate } from '../lib/day';
-import { FieldValue, firestore } from '../lib/firebase';
+import { FieldValue, firestore, functions } from '../lib/firebase';
 import {
   Post,
   SystemTweetInterval,
@@ -16,7 +15,7 @@ import { generateRandomNumber } from '../utils/generateRandomNumber';
 // isEnable
 // black date
 
-export const autoReserve = async (_: Request, res: Response) => {
+export const autoReserve = async (_: functions.EventContext) => {
   try {
     // get random post id
     const indexDoc = await firestore.doc('index/v2').get();
@@ -134,9 +133,8 @@ export const autoReserve = async (_: Request, res: Response) => {
       })
     );
 
-    res.json('success!');
+    console.log('auto reserve success!');
   } catch (err) {
-    console.error(err);
-    res.json('error!');
+    console.log('auto reserve failed!', err);
   }
 };
