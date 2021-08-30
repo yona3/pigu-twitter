@@ -1,4 +1,5 @@
 import { Request, Response } from 'firebase-functions/v1';
+import { generateDate } from '../lib/day';
 import { FieldValue, firestore } from '../lib/firebase';
 import {
   Post,
@@ -12,7 +13,6 @@ import { createTweetText } from '../utils/createTweetText';
 import { generateRandomNumber } from '../utils/generateRandomNumber';
 
 // todo
-// ! fix set tweetAt bag
 // isEnable
 // black date
 
@@ -111,9 +111,15 @@ export const autoReserve = async (_: Request, res: Response) => {
         const tweetText = createTweetText(post, user);
         const tweetTime = startTime + systemTweetInterval.h * i; // h
 
-        const tweetAt = new Date(); // now
-        tweetAt.setDate(tweetAt.getDate() + 1);
-        tweetAt.setHours(tweetTime - 9 + 24, 0, 0, 0); // set jst time
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = now.getMonth() + 1;
+        const date = now.getDate();
+        const tweetAt = generateDate(
+          `${year}-${month}-${date + 1} ${tweetTime}:00`
+        );
+        console.log('tweetAt: ', tweetAt);
+        tweetAt.setHours(tweetAt.getHours() - 9); // UTC
 
         const tweet: TweetDocument = {
           postId: post.id,
