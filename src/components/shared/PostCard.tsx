@@ -6,7 +6,7 @@ type Props = {
 };
 
 export const PostCard: VFC<Props> = ({ post }) => {
-  const { title, createdBy } = post;
+  const { title } = post;
 
   return (
     <div className="rounded-md p-6 shadow-sm border">
@@ -18,9 +18,7 @@ export const PostCard: VFC<Props> = ({ post }) => {
             text-sm sm:text-base mt-4
           "
         >
-          <p className="mr-5">
-            By: <span>{createdBy}</span>
-          </p>
+          <p className="mr-5">{/* By: <span>{createdBy}</span> */}</p>
           <p>
             予定時刻: <span>2021/8/22/10:00</span>
           </p>

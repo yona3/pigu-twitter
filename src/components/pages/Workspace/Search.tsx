@@ -1,6 +1,5 @@
 import React, { VFC } from 'react';
 import { Link } from 'react-router-dom';
-import { POSTS } from '../../../const/post';
 import { PostCard } from '../../shared/PostCard';
 
 export const Search: VFC = () => {
@@ -23,7 +22,7 @@ export const Search: VFC = () => {
       </div>
       <div>
         <div className="mt-10 space-y-5">
-          {POSTS.map((post) => (
+          {/* {POSTS.map((post) => (
             <Link
               className="block"
               to={`/workspace/post/${post.id}`}
@@ -31,7 +30,7 @@ export const Search: VFC = () => {
             >
               <PostCard post={post} />
             </Link>
-          ))}
+          ))} */}
         </div>
       </div>
     </div>
