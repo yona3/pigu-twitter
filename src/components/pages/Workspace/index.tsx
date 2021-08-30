@@ -4,6 +4,7 @@ import { Layout } from '../../shared/Layout';
 import { Tweet } from './Tweet';
 import { Search } from './Search';
 import { ReservationSetting } from './ReservationSetting';
+import { PostSetting } from './PostSetting';
 
 export const Workspace: VFC = () => {
   const { pathname } = useLocation();
@@ -46,7 +47,7 @@ export const Workspace: VFC = () => {
         </Route>
         <Route path="/workspace/post/:id">
           <div className="mt-10">
-            <h1>post detail</h1>
+            <PostSetting />
           </div>
         </Route>
       </Switch>

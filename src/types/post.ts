@@ -1,6 +1,12 @@
 export type Post = {
   id: string;
+  uid: string;
   title: string;
-  body: string;
-  createdBy: string;
+  content: string;
+  tags: string[];
+  timestamp: number;
+  like: number;
+  comment: number;
+  postImage?: string | null;
+  editAt?: number;
 };
