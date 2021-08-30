@@ -2,10 +2,12 @@ import React, { useEffect, useState, VFC } from 'react';
 import { useParams } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
 import { useForm } from '../../../hooks/useForm';
+import { generateDate } from '../../../lib/day';
 import {
   deleteReservation,
   fetchReservations,
   Timestamp,
+  updateReservation,
 } from '../../../lib/db';
 import { reservationsState } from '../../../state';
 import { Tweet, TweetDocument } from '../../../types';
@@ -67,7 +69,26 @@ export const ReservationSetting: VFC = () => {
 
     try {
       await deleteReservation(params.id);
-      window.location.href = '/';
+      window.location.reload();
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleUpdate = async () => {
+    try {
+      if (!reservation) throw new Error('No reservation found');
+
+      const updatedReservation: Tweet = {
+        ...reservation,
+        text: form.text,
+        tweetAt: generateDate(form.tweetAt),
+      };
+
+      const result = confirm('Are you sure?');
+      if (!result) throw new Error('Canceled.');
+
+      await updateReservation(reservation.tweetId, updatedReservation);
       window.location.reload();
     } catch (err) {
       console.error(err);
@@ -140,6 +161,7 @@ export const ReservationSetting: VFC = () => {
                 px-6 py-2 rounded transition w-1/2
                 font-semibold
               "
+              onClick={handleUpdate}
             >
               Update
             </button>

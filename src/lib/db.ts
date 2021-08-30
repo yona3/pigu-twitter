@@ -1,4 +1,5 @@
 import firebase from '../config/firebase';
+import { Tweet } from '../types';
 
 const db = firebase.firestore();
 
@@ -15,6 +16,9 @@ export const fetchMe = (userId: string) => db.doc(`users/${userId}`).get();
 
 export const fetchReservations = () =>
   db.collection('twitter/v1/tweet').orderBy('tweetAt').get();
+
+export const updateReservation = (reservationId: string, data: Tweet) =>
+  db.doc(`twitter/v1/tweet/${reservationId}`).update(data);
 
 export const deleteReservation = (reservationId: string) =>
   db.doc(`twitter/v1/tweet/${reservationId}`).delete();
