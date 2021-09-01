@@ -6,5 +6,6 @@ pigu公式Twitterアカウントのツイート管理システムです。
 - React
 - TypeScript
 - Firebase (Cloud Firestore, Cloud Functions, Firebase Authentication)
+- Recoil
 - TailwindCSS
 - Vite
