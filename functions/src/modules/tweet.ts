@@ -61,10 +61,18 @@ export const tweet = async (
       reserveDeleted,
     };
   } catch (err) {
-    console.error(err.message);
-    return {
-      ok: false,
-      error: err.message,
-    };
+    if (err instanceof Error) {
+      console.error(err.message);
+      return {
+        ok: false,
+        error: err.message,
+      };
+    } else {
+      console.error(err);
+      return {
+        ok: false,
+        error: err,
+      };
+    }
   }
 };
