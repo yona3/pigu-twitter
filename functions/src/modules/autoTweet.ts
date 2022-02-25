@@ -41,6 +41,10 @@ export const autoTweet = async (_: functions.EventContext) => {
 
     console.log('auto tweet success!');
   } catch (err) {
-    console.log('auto tweet failed!', err.message);
+    if (err instanceof Error) {
+      console.log('auto tweet failed!', err.message);
+    } else {
+      console.log('auto tweet failed!', err);
+    }
   }
 };
