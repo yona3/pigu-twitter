@@ -5,9 +5,8 @@
     "serve": "yarn build && firebase emulators:start --only functions",
     "shell": "yarn build && firebase functions:shell",
     "start": "yarn shell",
-    "deploy": "firebase deploy --only functions",
-    "deploy:auto_tweet": "firebase deploy --only functions:auto_tweet",
-    "deploy:auto_reserve": "firebase deploy --only functions:auto_reserve",
+    "deploy:auto_tweet": "yarn build && firebase deploy --only functions:auto_tweet",
+    "deploy:auto_reserve": "yarn build && firebase deploy --only functions:auto_reserve",
     "logs": "firebase functions:log"
   },
   "engines": {
