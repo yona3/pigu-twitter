@@ -15,81 +15,118 @@ import { generateRandomNumber } from '../utils/generateRandomNumber';
 // isEnable
 // black date
 
-export const autoReserve = async (_: functions.EventContext) => {
-  try {
-    // get random post id
-    const indexDoc = await firestore.doc('index/v2').get();
-    if (!indexDoc.exists) throw new Error("doc('index/v2') not found");
+const getRandomPostIds = async () => {
+  const indexDoc = await firestore.doc('index/v2').get();
+  if (!indexDoc.exists) throw new Error("doc('index/v2') data is empty");
 
-    const index = indexDoc.data() as { allPosts: string[] };
-    if (!index) throw new Error("doc('index/v2') data is empty");
+  return indexDoc.data() as { allPosts: string[] };
+};
 
-    // get reserve length
-    const systemTweetReserveSnapshot = await firestore
-      .collection('twitter/v1/system/tweet/reserve')
-      .get();
-    if (systemTweetReserveSnapshot.empty)
-      throw new Error("doc('twitter/v1/system/tweet/reserve') not found");
+const getReserveLength = async () => {
+  const systemTweetReserveSnapshot = await firestore
+    .collection('twitter/v1/system/tweet/reserve')
+    .get();
+  if (systemTweetReserveSnapshot.empty)
+    throw new Error("doc('twitter/v1/system/tweet/reserve') data is empty");
 
-    const systemTweetReserve =
-      systemTweetReserveSnapshot.docs[0].data() as SystemTweetReserve;
-    if (!systemTweetReserve)
-      throw new Error("doc('twitter/v1/system/tweet/reserve') data is empty");
+  const systemTweetReserve =
+    systemTweetReserveSnapshot.docs[0].data() as SystemTweetReserve;
 
-    const reserveLength = systemTweetReserve.length;
+  return systemTweetReserve.length;
+};
 
-    // get black post list
-    const systemBlackPostsSnapshot = await firestore
-      .collection('twitter/v1/system/tweet/blackPosts')
-      .get();
-    if (systemBlackPostsSnapshot.empty)
-      throw new Error("doc('twitter/v1/system/tweet/blackPosts') not found");
+const getBlackList = async () => {
+  const systemBlackPostsSnapshot = await firestore
+    .collection('twitter/v1/system/tweet/blackPosts')
+    .get();
+  if (systemBlackPostsSnapshot.empty)
+    throw new Error("doc('twitter/v1/system/tweet/blackPosts') not found");
 
-    const systemBlackPostsIds = systemBlackPostsSnapshot.docs.map(
-      (doc) => doc.id
+  return systemBlackPostsSnapshot.docs.map((doc) => doc.id);
+};
+
+const generateRandomPostIds = ({
+  index,
+  reserveLength,
+  systemBlackPostsIds,
+}: {
+  index: { allPosts: string[] };
+  reserveLength: number;
+  systemBlackPostsIds: string[];
+}) => {
+  let result: string[] = [];
+  for (let i = 0; i < reserveLength; ) {
+    const randomIndex = generateRandomNumber(0, index.allPosts.length - 1);
+
+    if (
+      !result.includes(index.allPosts[randomIndex]) &&
+      !systemBlackPostsIds.includes(index.allPosts[randomIndex])
+    ) {
+      result = [...result, index.allPosts[randomIndex]];
+      i++;
+    }
+  }
+  return result;
+};
+
+const getInterval = async () => {
+  const systemTweetIntervalSnapshot = await firestore
+    .collection('twitter/v1/system/tweet/interval')
+    .get();
+  if (systemTweetIntervalSnapshot.empty)
+    throw new Error("doc('twitter/v1/system/tweet/interval') data is empty");
+
+  return systemTweetIntervalSnapshot.docs[0].data() as SystemTweetInterval;
+};
+
+const getStartTime = async () => {
+  const systemTweetOperationTimeSnapshot = await firestore
+    .collection('twitter/v1/system/tweet/operationTime')
+    .get();
+  if (systemTweetOperationTimeSnapshot.empty)
+    throw new Error(
+      "doc('twitter/v1/system/tweet/operationTime') data is empty"
     );
 
-    // create random post id array
-    let randomPostIds: string[] = [];
-    for (let i = 0; i < reserveLength; ) {
-      const randomIndex = generateRandomNumber(0, index.allPosts.length - 1);
+  const systemTweetOperationTime =
+    systemTweetOperationTimeSnapshot.docs[0].data() as SystemTweetOperationTime;
 
-      if (
-        !randomPostIds.includes(index.allPosts[randomIndex]) &&
-        !systemBlackPostsIds.includes(index.allPosts[randomIndex])
-      ) {
-        randomPostIds = [...randomPostIds, index.allPosts[randomIndex]];
-        i++;
-      }
-    }
+  return systemTweetOperationTime.start;
+};
 
-    // get interval
-    const systemTweetIntervalSnapshot = await firestore
-      .collection('twitter/v1/system/tweet/interval')
-      .get();
-    if (systemTweetIntervalSnapshot.empty)
-      throw new Error("doc('twitter/v1/system/tweet/interval') not found");
-    const systemTweetInterval =
-      systemTweetIntervalSnapshot.docs[0].data() as SystemTweetInterval;
-    if (!systemTweetInterval)
-      throw new Error("doc('twitter/v1/system/tweet/interval') data is empty");
+const getTweetAt = (tweetTime: number) => {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = now.getMonth() + 1;
+  const date = now.getDate();
+  const tweetAt = generateDate(`${year}-${month}-${date + 1} ${tweetTime}:00`);
+  tweetAt.setHours(tweetAt.getHours() - 9); // UTC
 
-    // get start time
-    const systemTweetOperationTimeSnapshot = await firestore
-      .collection('twitter/v1/system/tweet/operationTime')
-      .get();
-    if (systemTweetOperationTimeSnapshot.empty)
-      throw new Error("doc('twitter/v1/system/tweet/operationTime') not found");
-    const systemTweetOperationTime =
-      systemTweetOperationTimeSnapshot.docs[0].data() as SystemTweetOperationTime;
-    if (!systemTweetOperationTime)
-      throw new Error(
-        "doc('twitter/v1/system/tweet/operationTime') data is empty"
-      );
+  return tweetAt;
+};
 
-    const startTime = systemTweetOperationTime.start;
+// main
+export const autoReserve = async (_: functions.EventContext) => {
+  try {
+    const [index, reserveLength, systemBlackPostsIds] = await Promise.all([
+      getRandomPostIds(),
+      getReserveLength(),
+      getBlackList(),
+    ]);
 
-    // get random posts
+    // generate random post id array
+    const randomPostIds = generateRandomPostIds({
+      index,
+      reserveLength,
+      systemBlackPostsIds,
+    });
+
+    const [systemTweetInterval, startTime] = await Promise.all([
+      getInterval(),
+      getStartTime(),
+    ]);
+
+    // get random posts and reserve
     await Promise.all(
       randomPostIds.map(async (postId, i) => {
         // get post
@@ -97,28 +134,18 @@ export const autoReserve = async (_: functions.EventContext) => {
         if (!postDoc.exists) return;
 
         const post = postDoc.data() as Post;
-        if (!post) return;
 
         // get user
         const userDoc = await firestore.doc(`users/${post.uid}`).get();
         if (!userDoc.exists) return;
 
         const user = userDoc.data() as User;
-        if (!user) return;
 
         // create tweet
         const tweetText = createTweetText(post, user);
+        console.log('tweetText: ', tweetText);
         const tweetTime = startTime + systemTweetInterval.h * i; // h
-
-        const now = new Date();
-        const year = now.getFullYear();
-        const month = now.getMonth() + 1;
-        const date = now.getDate();
-        const tweetAt = generateDate(
-          `${year}-${month}-${date + 1} ${tweetTime}:00`
-        );
-        console.log('tweetAt: ', tweetAt);
-        tweetAt.setHours(tweetAt.getHours() - 9); // UTC
+        const tweetAt = getTweetAt(tweetTime);
 
         const tweet: TweetDocument = {
           postId: post.id,
